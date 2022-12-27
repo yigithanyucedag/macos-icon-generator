@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { prompt } = require("prompts");
 const fs = require("fs");
 const sharp = require("sharp");
