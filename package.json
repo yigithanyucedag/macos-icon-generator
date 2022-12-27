@@ -1,0 +1,17 @@
+{
+  "name": "macos-icon-generator",
+  "version": "0.0.0",
+  "description": "This is a simple script to generate all the icons needed for a macOS app.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "prompts": "^2.4.2",
+    "sharp": "^0.31.3"
+  }
+}
