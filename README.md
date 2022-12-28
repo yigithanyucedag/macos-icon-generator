@@ -1,6 +1,6 @@
 # macos-icon-generator
 
-This is a simple script to generate all the icons needed for a macOS app.
+This is a simple script to generate all the app icons for macOS.
 
 ![Preview](docs/usage.gif)
 
