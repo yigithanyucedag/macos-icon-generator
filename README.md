@@ -4,16 +4,6 @@ This is a simple script to generate all the icons needed for a macOS app.
 
 ![Preview](docs/usage.gif)
 
-#### List of icons generated:
-
-- 16x16
-- 32x32
-- 64x64
-- 128x128
-- 256x256
-- 512x512
-- 1024x1024
-
 ## Usage
 
 You should provide a path to an image file. The image should be at least 1024x1024 pixels.
@@ -27,6 +17,19 @@ npx macos-icon-generator <path-to-image>
 ```
 npx macos-icon-generator ./icon.png
 ```
+
+## Features
+
+- Select which icons to generate
+- Specify output directory
+- Generate all icons in one go
+  - 16x16
+  - 32x32
+  - 64x64
+  - 128x128
+  - 256x256
+  - 512x512
+  - 1024x1024
 
 ## FAQ
 
