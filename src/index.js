@@ -22,31 +22,31 @@ const gray = chalk.gray;
     )
   );
 
-  // Ask the user for the main icon path (1024x1024)
-  let { mainIconPath } = await prompt({
-    type: "text",
-    name: "mainIconPath",
-    message: "Enter the path to the main icon (1024x1024)",
-  });
+  // Get first argument as main icon file path
+  let mainIconPath = process.argv[2];
 
   if (!mainIconPath) {
-    log(error("You must enter a path!"));
+    log(
+      error(
+        "❗️ You must enter a path! Example: npx macos-icon-generator ./icon.png"
+      )
+    );
     return;
   }
 
-  // trim and remove quotes
+  // Trim and remove quotes from the path
   mainIconPath = mainIconPath.trim().replace(/['"]+/g, "");
 
-  //check if the main icon file exists
+  // Check if the main icon file exists
   if (!fs.existsSync(mainIconPath)) {
-    log(error("The main icon file does not exist!"));
+    log(error("❗️ The main icon file does not exist!"));
     return;
   }
 
-  // check if the main icon file is 1024x1024
+  // Check if the main icon file is 1024x1024
   const { width, height } = await sharp(mainIconPath).metadata();
   if (width !== 1024 || height !== 1024) {
-    log(error("The main icon file is not 1024x1024!"));
+    log(error("❗️ The main icon file is not 1024x1024!"));
     return;
   }
 
@@ -63,7 +63,7 @@ const gray = chalk.gray;
   });
 
   if (!resolutions.length) {
-    log(error("You must select at least one resolution!"));
+    log(error("❗️ You must select at least one resolution!"));
     return;
   }
 
@@ -75,15 +75,15 @@ const gray = chalk.gray;
     initial: "./macos-icons",
   });
 
-  // trim and remove quotes
+  // Trim and remove quotes from the path
   outputDir = outputDir.trim().replace(/['"]+/g, "");
 
-  // check if the output directory exists and create it if it doesn't
+  // Check if the output directory exists and create it if it doesn't
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
   }
 
-  // generate the icons
+  // Generate the icons
   for (const size of resolutions) {
     const outputFilePath = `${outputDir}/icon_${size}.png`;
     await sharp(mainIconPath).resize(size, size).toFile(outputFilePath);
@@ -94,6 +94,10 @@ const gray = chalk.gray;
 })();
 
 process.on("exit", () => {
-  log(gray("Thanks for using the macOS app icon generator 🙏"));
+  log(
+    gray(
+      "⚠️ If you found this tool useful, please star it on GitHub: https://github.com/yigithanyucedag/macos-icon-generator"
+    )
+  );
   process.exit(0);
 });
