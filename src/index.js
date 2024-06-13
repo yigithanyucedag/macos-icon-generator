@@ -4,6 +4,7 @@ const { prompt } = require("prompts");
 const fs = require("fs");
 const sharp = require("sharp");
 const chalk = require("chalk");
+const { program } = require("commander");
 
 chalk.level = 1;
 
@@ -15,15 +16,20 @@ const error = chalk.bold.red;
 const success = chalk.bold.green;
 const gray = chalk.gray;
 
+program
+  .argument('<mainIconPath>', 'Path to the main icon file')
+  .option('-r, --rounded', 'Enable rounded corners for icons')
+  .parse(process.argv);
+
+const options = program.opts();
+const mainIconPath = program.args[0];
+
 (async () => {
   log(
     info(
       "Welcome to the macOS app icon generator! This tool will help you generate all the required icons for your macOS app."
     )
   );
-
-  // Get first argument as main icon file path
-  let mainIconPath = process.argv[2];
 
   if (!mainIconPath) {
     log(
@@ -35,16 +41,16 @@ const gray = chalk.gray;
   }
 
   // Trim and remove quotes from the path
-  mainIconPath = mainIconPath.trim().replace(/['"]+/g, "");
+  const trimmedIconPath = mainIconPath.trim().replace(/['"]+/g, "");
 
   // Check if the main icon file exists
-  if (!fs.existsSync(mainIconPath)) {
+  if (!fs.existsSync(trimmedIconPath)) {
     log(error("❗️ The main icon file does not exist!"));
     return;
   }
 
   // Check if the main icon file is 1024x1024
-  const { width, height } = await sharp(mainIconPath).metadata();
+  const { width, height } = await sharp(trimmedIconPath).metadata();
   if (width !== 1024 || height !== 1024) {
     log(error("❗️ The main icon file is not 1024x1024!"));
     return;
@@ -83,10 +89,29 @@ const gray = chalk.gray;
     fs.mkdirSync(outputDir);
   }
 
+  // Function to create a rounded corner mask
+  const createRoundedMask = (size, radius) => {
+    const svg = `
+      <svg width="${size}" height="${size}">
+        <rect x="0" y="0" width="${size}" height="${size}" rx="${radius}" ry="${radius}" fill="white"/>
+      </svg>
+    `;
+    return Buffer.from(svg);
+  };
+
   // Generate the icons
   for (const size of resolutions) {
     const outputFilePath = `${outputDir}/icon_${size}.png`;
-    await sharp(mainIconPath).resize(size, size).toFile(outputFilePath);
+    const sharpInstance = sharp(trimmedIconPath).resize(size, size);
+
+    if (options.rounded) {
+      const radius = size * 0.1; // Adjust the radius as needed
+      const mask = createRoundedMask(size, radius);
+      await sharpInstance.composite([{ input: mask, blend: "dest-in" }]).toFile(outputFilePath);
+    } else {
+      await sharpInstance.toFile(outputFilePath);
+    }
+
     log(success(`Generated ${outputFilePath}`));
   }
 
